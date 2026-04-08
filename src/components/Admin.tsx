@@ -34,6 +34,7 @@ export default function Admin() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('hero');
+  const [loginError, setLoginError] = useState<string | null>(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (u) => {
@@ -42,6 +43,27 @@ export default function Admin() {
     });
     return () => unsubscribe();
   }, []);
+
+  const handleLogin = async () => {
+    try {
+      setLoginError(null);
+      await signInWithGoogle();
+    } catch (error: any) {
+      console.error("Login error detail:", error);
+      // 구체적인 에러 메시지 처리
+      if (error.code === 'auth/popup-blocked') {
+        setLoginError("팝업이 차단되었습니다. 브라우저 설정에서 팝업을 허용해주세요.");
+      } else if (error.code === 'auth/unauthorized-domain') {
+        setLoginError("현재 도메인이 Firebase 승인 도메인에 등록되지 않았습니다.");
+      } else if (error.code === 'auth/popup-closed-by-user') {
+        setLoginError("로그인 창이 닫혔습니다. 다시 시도해주세요.");
+      } else if (error.code === 'auth/cancelled-popup-request') {
+        // Ignore this error as it's usually a duplicate request
+      } else {
+        setLoginError(error.message || "로그인 중 오류가 발생했습니다.");
+      }
+    }
+  };
 
   if (loading) return <div className="flex items-center justify-center h-screen">Loading...</div>;
 
@@ -54,8 +76,15 @@ export default function Admin() {
           </div>
           <h1 className="text-3xl font-bold mb-4">관리자 로그인</h1>
           <p className="text-gray-600 mb-8">홈페이지 콘텐츠 관리를 위해 관리자 계정으로 로그인해주세요.</p>
+          
+          {loginError && (
+            <div className="mb-6 p-4 bg-red-50 text-red-600 rounded-xl text-sm font-medium border border-red-100">
+              {loginError}
+            </div>
+          )}
+
           <button 
-            onClick={signInWithGoogle}
+            onClick={handleLogin}
             className="w-full bg-green-600 text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-green-700 transition-all"
           >
             <LogIn size={20} />
