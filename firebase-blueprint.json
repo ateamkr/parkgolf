@@ -1,0 +1,105 @@
+{
+  "entities": {
+    "HeroSlide": {
+      "title": "Hero Slide",
+      "description": "A slide in the hero carousel",
+      "type": "object",
+      "properties": {
+        "url": { "type": "string", "description": "Image URL" },
+        "title": { "type": "string", "description": "Main title text" },
+        "highlight": { "type": "string", "description": "Highlighted text" },
+        "subtitle": { "type": "string", "description": "Subtitle text" },
+        "order": { "type": "number", "description": "Display order" }
+      },
+      "required": ["url", "title", "highlight", "subtitle", "order"]
+    },
+    "Stat": {
+      "title": "Statistic",
+      "description": "A statistic item in the stats section",
+      "type": "object",
+      "properties": {
+        "label": { "type": "string", "description": "Stat label" },
+        "value": { "type": "string", "description": "Stat value (e.g. 1,000만+)" },
+        "order": { "type": "number", "description": "Display order" }
+      },
+      "required": ["label", "value", "order"]
+    },
+    "Feature": {
+      "title": "Feature",
+      "description": "A feature in the features section",
+      "type": "object",
+      "properties": {
+        "icon": { "type": "string", "description": "Lucide icon name" },
+        "title": { "type": "string", "description": "Feature title" },
+        "desc": { "type": "string", "description": "Feature description" },
+        "order": { "type": "number", "description": "Display order" }
+      },
+      "required": ["icon", "title", "desc", "order"]
+    },
+    "RevenueModel": {
+      "title": "Revenue Model",
+      "description": "A revenue model item",
+      "type": "object",
+      "properties": {
+        "icon": { "type": "string", "description": "Lucide icon name" },
+        "title": { "type": "string", "description": "Model title" },
+        "desc": { "type": "string", "description": "Model description" },
+        "price": { "type": "string", "description": "Estimated revenue" },
+        "order": { "type": "number", "description": "Display order" }
+      },
+      "required": ["icon", "title", "desc", "price", "order"]
+    },
+    "Product": {
+      "title": "Product/Business Area",
+      "description": "A business area or product item",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "description": "Product title" },
+        "subtitle": { "type": "string", "description": "Product subtitle" },
+        "imageUrl": { "type": "string", "description": "Image URL" },
+        "features": { "type": "array", "items": { "type": "string" }, "description": "List of features" },
+        "order": { "type": "number", "description": "Display order" },
+        "layout": { "type": "string", "enum": ["grid", "full"], "description": "Layout style" }
+      },
+      "required": ["title", "subtitle", "imageUrl", "features", "order", "layout"]
+    },
+    "SiteSettings": {
+      "title": "Site Settings",
+      "description": "General site configuration",
+      "type": "object",
+      "properties": {
+        "brandName": { "type": "string" },
+        "contactPhone": { "type": "string" },
+        "contactEmail": { "type": "string" },
+        "address": { "type": "string" },
+        "footerDescription": { "type": "string" }
+      }
+    }
+  },
+  "firestore": {
+    "/hero_slides/{slideId}": {
+      "schema": "HeroSlide",
+      "description": "Hero carousel slides"
+    },
+    "/stats/{statId}": {
+      "schema": "Stat",
+      "description": "Statistics items"
+    },
+    "/features/{featureId}": {
+      "schema": "Feature",
+      "description": "Core features"
+    },
+    "/revenue_models/{modelId}": {
+      "schema": "RevenueModel",
+      "description": "Revenue model items"
+    },
+    "/products/{productId}": {
+      "schema": "Product",
+      "description": "Business areas/products"
+    },
+    "/settings/site": {
+      "schema": "SiteSettings",
+      "description": "Global site settings"
+    }
+  }
+}
