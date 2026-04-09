@@ -80,16 +80,34 @@ export default function Admin() {
           {loginError && (
             <div className="mb-6 p-4 bg-red-50 text-red-600 rounded-xl text-sm font-medium border border-red-100">
               {loginError}
+              {loginError.includes("닫혔습니다") && (
+                <p className="mt-2 text-xs text-red-500 font-normal">
+                  * 미리보기 창에서는 팝업이 차단될 수 있습니다. <br/>
+                  우측 상단의 <b>'새 탭에서 열기'</b> 버튼을 눌러 시도해 보세요.
+                </p>
+              )}
             </div>
           )}
 
           <button 
             onClick={handleLogin}
-            className="w-full bg-green-600 text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-green-700 transition-all"
+            className="w-full bg-green-600 text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-green-700 transition-all mb-3"
           >
             <LogIn size={20} />
             Google로 로그인
           </button>
+
+          <button 
+            onClick={() => window.open(window.location.href, '_blank')}
+            className="w-full bg-white text-gray-600 py-4 rounded-xl font-bold flex items-center justify-center gap-2 border border-gray-200 hover:bg-gray-50 transition-all"
+          >
+            <Layout size={20} />
+            새 탭에서 관리자 페이지 열기
+          </button>
+
+          <p className="mt-6 text-xs text-gray-400">
+            * 로그인 팝업이 즉시 닫힌다면 '새 탭에서 열기'를 이용해주세요.
+          </p>
           {user && user.email !== ADMIN_EMAIL && (
             <p className="mt-4 text-red-500 text-sm">권한이 없는 계정입니다. ({user.email})</p>
           )}
@@ -186,7 +204,6 @@ function HeroManager() {
 
   const handleSave = async (id: string, data: any) => {
     await updateDoc(doc(db, 'hero_slides', id), data);
-    alert('저장되었습니다.');
   };
 
   const handleAdd = async () => {
@@ -202,10 +219,8 @@ function HeroManager() {
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm('정말 삭제하시겠습니까?')) {
-      await deleteDoc(doc(db, 'hero_slides', id));
-      fetchSlides();
-    }
+    await deleteDoc(doc(db, 'hero_slides', id));
+    fetchSlides();
   };
 
   if (loading) return <div>Loading...</div>;
@@ -308,10 +323,8 @@ function StatsManager() {
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm('삭제하시겠습니까?')) {
-      await deleteDoc(doc(db, 'stats', id));
-      fetchStats();
-    }
+    await deleteDoc(doc(db, 'stats', id));
+    fetchStats();
   };
 
   if (loading) return <div>Loading...</div>;
@@ -381,10 +394,8 @@ function FeaturesManager() {
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm('삭제하시겠습니까?')) {
-      await deleteDoc(doc(db, 'features', id));
-      fetchFeatures();
-    }
+    await deleteDoc(doc(db, 'features', id));
+    fetchFeatures();
   };
 
   if (loading) return <div>Loading...</div>;
@@ -461,10 +472,8 @@ function RevenueManager() {
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm('삭제하시겠습니까?')) {
-      await deleteDoc(doc(db, 'revenue_models', id));
-      fetchModels();
-    }
+    await deleteDoc(doc(db, 'revenue_models', id));
+    fetchModels();
   };
 
   if (loading) return <div>Loading...</div>;
@@ -553,10 +562,8 @@ function ProductsManager() {
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm('삭제하시겠습니까?')) {
-      await deleteDoc(doc(db, 'products', id));
-      fetchProducts();
-    }
+    await deleteDoc(doc(db, 'products', id));
+    fetchProducts();
   };
 
   if (loading) return <div>Loading...</div>;
@@ -655,6 +662,7 @@ function ProductsManager() {
 function SettingsManager() {
   const [settings, setSettings] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [seedStatus, setSeedStatus] = useState<'idle' | 'seeding' | 'success' | 'error'>('idle');
 
   useEffect(() => {
     fetchSettings();
@@ -684,175 +692,283 @@ function SettingsManager() {
     setSettings({ ...settings, ...data });
   };
 
+  const handleSeedData = async () => {
+    try {
+      setSeedStatus('seeding');
+      
+      // Hero Slides
+      const heroSlides = [
+        {
+          url: "https://images.unsplash.com/photo-1591491640784-3232eb748d4b?auto=format&fit=crop&q=80&w=1920",
+          title: "시니어 건강을 지키는",
+          highlight: "행복한 공간",
+          subtitle: "사람이 모이고 이야기가 피어나는 우리 동네 사랑방\n건강과 수익을 동시에 챙기는 스마트 솔루션",
+          order: 0
+        },
+        {
+          url: "https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?auto=format&fit=crop&q=80&w=1920",
+          title: "3일이면 완성되는",
+          highlight: "스크린 파크골프",
+          subtitle: "조립식 부스 시스템으로 빠르고 간편한 설치\n지금 바로 성공 창업의 기회를 잡으세요",
+          order: 1
+        },
+        {
+          url: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=1920",
+          title: "취미가 수익이 되는",
+          highlight: "파크사랑방",
+          subtitle: "저비용 소형 스크린 파크골프 기반\n용품 + 교육 + 운영을 결합한 혁신적인 수익형 매장",
+          order: 2
+        }
+      ];
+      for (const slide of heroSlides) {
+        await addDoc(collection(db, 'hero_slides'), slide);
+      }
+
+      // Stats
+      const stats = [
+        { label: '설치 기간', value: '3일', order: 0 },
+        { label: '수익 모델', value: '4가지', order: 1 },
+        { label: '전국 지점', value: '200+', order: 2 },
+        { label: '월 예상 수익', value: '1,000만+', order: 3 },
+      ];
+      for (const stat of stats) {
+        await addDoc(collection(db, 'stats'), stat);
+      }
+
+      // Settings
+      const initialSettings = {
+        brandName: '파크사랑방',
+        contactPhone: '1661-6842',
+        contactEmail: 'info@parksarang.co.kr',
+        address: '서울특별시 강남구 테헤란로 123, 4층 (파크빌딩)',
+        footerDescription: '파크사랑방은 시니어 건강과 즐거움을 위한 최고의 파크골프 환경을 제공합니다. 차별화된 기술력과 서비스로 파크골프의 새로운 기준을 제시합니다.',
+        brandIntro: {
+          title: "단순한 매장이 아닌\n지속 가능한 수익 플랫폼입니다.",
+          description: "파크사랑방은 시니어 인구 급증과 실내 스포츠 수요 폭발에 맞춰 설계된 프리미엄 파크골프 프렌차이즈입니다. 조립식 부스 시스템으로 단 3일이면 창업이 가능하며, 4가지 복합 수익 구조로 안정적인 매출을 보장합니다.",
+          points: [
+            '소형 평수(15~30평) 최적화 창업',
+            '무인 운영 시스템으로 인건비 절감',
+            '본사 원스톱 지원',
+            '정부 지원 사업 연계 가능'
+          ],
+          badgeValue: "100%",
+          badgeLabel: "점주 만족도",
+          imageUrl: "https://images.unsplash.com/photo-1591491640784-3232eb748d4b?auto=format&fit=crop&q=80&w=1920"
+        }
+      };
+      await setDoc(doc(db, 'settings', 'site'), initialSettings);
+
+      // Features
+      const features = [
+        { icon: 'Clock', title: '3일 완성 시스템', desc: '설계부터 시공까지 단 3일이면 오픈 가능합니다.', order: 0 },
+        { icon: 'TrendingUp', title: '복합 수익 구조', desc: '이용료, 용품, 교육, 회원제 4가지 수익 모델.', order: 1 },
+        { icon: 'Building2', title: '저비용 창업', desc: '조립식 부스와 최적화된 인테리어로 비용 최소화.', order: 2 },
+        { icon: 'Award', title: '최고의 품질', desc: '검증된 스크린 장비와 프리미엄 파크골프 용품.', order: 3 },
+        { icon: 'Users', title: '전문 아카데미', desc: '본사 교육 노하우 전수로 초보자도 운영 가능.', order: 4 },
+        { icon: 'Store', title: '무인 운영 가능', desc: '스마트 시스템 도입으로 효율적인 매장 관리.', order: 5 },
+      ];
+      for (const f of features) {
+        await addDoc(collection(db, 'features'), f);
+      }
+
+      // Revenue Models
+      const revModels = [
+        { icon: 'Store', title: '타석 이용료', desc: '시간당 이용 요금으로 발생하는 안정적인 매출', price: '월 400~600만', order: 0 },
+        { icon: 'ShoppingBag', title: '용품 판매', desc: '고마진 파크골프채, 공, 액세서리 판매 수익', price: '월 200~400만', order: 1 },
+        { icon: 'GraduationCap', title: '아카데미 교육', desc: '레슨 및 지도자 자격증 과정 수강료 수익', price: '월 150~300만', order: 2 },
+        { icon: 'CreditCard', title: '회원제 운영', desc: '월/연 단위 회원권 판매로 고정 수익 확보', price: '월 200~500만', order: 3 },
+      ];
+      for (const m of revModels) {
+        await addDoc(collection(db, 'revenue_models'), m);
+      }
+
+      // Products
+      const products = [
+        { 
+          title: '스크린창업 솔루션', 
+          subtitle: '조립부스·인테리어·장비까지 원스톱', 
+          imageUrl: 'https://images.unsplash.com/photo-1535131749006-b7f58c99034b?auto=format&fit=crop&q=80&w=800',
+          features: ['맞춤형 부스 시공', '인테리어 디자인', '스크린골프 장비 설치'],
+          order: 0,
+          layout: 'grid'
+        },
+        { 
+          title: '골프채·용품 유통', 
+          subtitle: '다양한 브랜드, 최고의 가격', 
+          imageUrl: 'https://images.unsplash.com/photo-1593111774240-d529f12cf4bb?auto=format&fit=crop&q=80&w=800',
+          features: ['정품 골프채', '골프용품·액세서리', '창업자 특별 할인'],
+          order: 1,
+          layout: 'grid'
+        },
+        { 
+          title: '파크아카데미', 
+          subtitle: '성공 창업을 위한 모든 것', 
+          imageUrl: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=800',
+          features: ['창업 교육', '운영 노하우', '지속적인 컨설팅'],
+          order: 2,
+          layout: 'grid'
+        },
+        { 
+          title: '이동식컨테이너 사업', 
+          subtitle: '이동과 설치가 쉬운 맞춤형 컨테이너', 
+          imageUrl: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=800',
+          features: ['스크린골프장', '매장·사무실', '빠른 설치·이동'],
+          order: 3,
+          layout: 'full'
+        }
+      ];
+      for (const p of products) {
+        await addDoc(collection(db, 'products'), p);
+      }
+
+      setSeedStatus('success');
+      setTimeout(() => window.location.reload(), 2000);
+    } catch (error) {
+      console.error("Seeding error:", error);
+      setSeedStatus('error');
+    }
+  };
+
   if (loading) return <div>Loading...</div>;
 
   return (
     <div className="max-w-2xl space-y-6">
-      <div className="grid gap-6">
-        <div>
-          <label className="block text-sm font-bold text-gray-700 mb-1">브랜드명</label>
-          <input 
-            type="text" 
-            defaultValue={settings.brandName} 
-            onBlur={(e) => handleSave({ brandName: e.target.value })}
-            className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none" 
-          />
-        </div>
-        <div className="grid grid-cols-2 gap-4">
+      <div className="bg-blue-50 border border-blue-100 p-6 rounded-2xl mb-8">
+        <h3 className="text-lg font-bold text-blue-800 mb-2">컨텐츠 관리 안내</h3>
+        <p className="text-blue-600 text-sm leading-relaxed">
+          현재 홈페이지의 모든 컨텐츠(이미지, 텍스트, 수치 등)를 관리자 페이지에서 직접 수정할 수 있도록 구성했습니다. 
+          아래 <b>[전체 컨텐츠 데이터베이스 등록]</b> 버튼을 누르면 기존의 모든 내용이 데이터베이스에 저장되어 즉시 편집 가능한 상태가 됩니다.
+        </p>
+        <button 
+          onClick={handleSeedData}
+          disabled={seedStatus === 'seeding'}
+          className={`mt-4 px-6 py-3 rounded-xl font-bold transition-all shadow-lg flex items-center gap-2 ${
+            seedStatus === 'seeding' ? 'bg-gray-400 cursor-not-allowed' : 
+            seedStatus === 'success' ? 'bg-green-600 text-white' :
+            seedStatus === 'error' ? 'bg-red-600 text-white' :
+            'bg-blue-600 text-white hover:bg-blue-700 shadow-blue-200'
+          }`}
+        >
+          {seedStatus === 'idle' && <><Save size={20} /> 전체 컨텐츠 데이터베이스 등록</>}
+          {seedStatus === 'seeding' && <>등록 중...</>}
+          {seedStatus === 'success' && <>등록 완료! 잠시 후 새로고침됩니다.</>}
+          {seedStatus === 'error' && <>오류 발생. 다시 시도해주세요.</>}
+        </button>
+      </div>
+      <div className="pt-10 border-t border-gray-200">
+        <h3 className="text-xl font-bold mb-4">사이트 기본 정보</h3>
+        <div className="grid gap-6">
           <div>
-            <label className="block text-sm font-bold text-gray-700 mb-1">대표 번호</label>
+            <label className="block text-sm font-bold text-gray-700 mb-1">브랜드명</label>
             <input 
               type="text" 
-              defaultValue={settings.contactPhone} 
-              onBlur={(e) => handleSave({ contactPhone: e.target.value })}
+              defaultValue={settings.brandName} 
+              onBlur={(e) => handleSave({ brandName: e.target.value })}
+              className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none" 
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-bold text-gray-700 mb-1">대표 번호</label>
+              <input 
+                type="text" 
+                defaultValue={settings.contactPhone} 
+                onBlur={(e) => handleSave({ contactPhone: e.target.value })}
+                className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none" 
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-bold text-gray-700 mb-1">이메일</label>
+              <input 
+                type="text" 
+                defaultValue={settings.contactEmail} 
+                onBlur={(e) => handleSave({ contactEmail: e.target.value })}
+                className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none" 
+              />
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-bold text-gray-700 mb-1">주소</label>
+            <input 
+              type="text" 
+              defaultValue={settings.address} 
+              onBlur={(e) => handleSave({ address: e.target.value })}
               className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none" 
             />
           </div>
           <div>
-            <label className="block text-sm font-bold text-gray-700 mb-1">이메일</label>
-            <input 
-              type="text" 
-              defaultValue={settings.contactEmail} 
-              onBlur={(e) => handleSave({ contactEmail: e.target.value })}
+            <label className="block text-sm font-bold text-gray-700 mb-1">푸터 설명</label>
+            <textarea 
+              rows={4}
+              defaultValue={settings.footerDescription} 
+              onBlur={(e) => handleSave({ footerDescription: e.target.value })}
               className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none" 
             />
           </div>
-        </div>
-        <div>
-          <label className="block text-sm font-bold text-gray-700 mb-1">주소</label>
-          <input 
-            type="text" 
-            defaultValue={settings.address} 
-            onBlur={(e) => handleSave({ address: e.target.value })}
-            className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none" 
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-bold text-gray-700 mb-1">푸터 설명</label>
-          <textarea 
-            rows={4}
-            defaultValue={settings.footerDescription} 
-            onBlur={(e) => handleSave({ footerDescription: e.target.value })}
-            className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none" 
-          />
         </div>
       </div>
-      
+
       <div className="pt-10 border-t border-gray-200">
-        <h3 className="text-xl font-bold mb-4 text-red-600">초기 데이터 생성</h3>
-        <p className="text-gray-500 mb-4 text-sm">기존의 하드코딩된 데이터를 Firestore로 마이그레이션합니다. (최초 1회 권장)</p>
-        <button 
-          onClick={async () => {
-            if (confirm('모든 데이터를 초기화하고 다시 생성하시겠습니까?')) {
-              // Hero Slides
-              const heroSlides = [
-                {
-                  url: "https://images.unsplash.com/photo-1591491640784-3232eb748d4b?auto=format&fit=crop&q=80&w=1920",
-                  title: "시니어 건강을 지키는",
-                  highlight: "행복한 공간",
-                  subtitle: "사람이 모이고 이야기가 피어나는 우리 동네 사랑방\n건강과 수익을 동시에 챙기는 스마트 솔루션",
-                  order: 0
-                },
-                {
-                  url: "https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?auto=format&fit=crop&q=80&w=1920",
-                  title: "3일이면 완성되는",
-                  highlight: "스크린 파크골프",
-                  subtitle: "조립식 부스 시스템으로 빠르고 간편한 설치\n지금 바로 성공 창업의 기회를 잡으세요",
-                  order: 1
-                },
-                {
-                  url: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=1920",
-                  title: "취미가 수익이 되는",
-                  highlight: "파크사랑방",
-                  subtitle: "저비용 소형 스크린 파크골프 기반\n용품 + 교육 + 운영을 결합한 혁신적인 수익형 매장",
-                  order: 2
-                }
-              ];
-              for (const slide of heroSlides) {
-                await addDoc(collection(db, 'hero_slides'), slide);
-              }
-
-              // Stats
-              const stats = [
-                { label: '설치 기간', value: '3일', order: 0 },
-                { label: '수익 모델', value: '4가지', order: 1 },
-                { label: '전국 지점', value: '200+', order: 2 },
-                { label: '월 예상 수익', value: '1,000만+', order: 3 },
-              ];
-              for (const stat of stats) {
-                await addDoc(collection(db, 'stats'), stat);
-              }
-
-              // Features
-              const features = [
-                { icon: 'Clock', title: '3일 완성 시스템', desc: '설계부터 시공까지 단 3일이면 오픈 가능합니다.', order: 0 },
-                { icon: 'TrendingUp', title: '복합 수익 구조', desc: '이용료, 용품, 교육, 회원제 4가지 수익 모델.', order: 1 },
-                { icon: 'Building2', title: '저비용 창업', desc: '조립식 부스와 최적화된 인테리어로 비용 최소화.', order: 2 },
-                { icon: 'Award', title: '최고의 품질', desc: '검증된 스크린 장비와 프리미엄 파크골프 용품.', order: 3 },
-                { icon: 'Users', title: '전문 아카데미', desc: '본사 교육 노하우 전수로 초보자도 운영 가능.', order: 4 },
-                { icon: 'Store', title: '무인 운영 가능', desc: '스마트 시스템 도입으로 효율적인 매장 관리.', order: 5 },
-              ];
-              for (const f of features) {
-                await addDoc(collection(db, 'features'), f);
-              }
-
-              // Revenue Models
-              const revModels = [
-                { icon: 'Store', title: '타석 이용료', desc: '시간당 이용 요금으로 발생하는 안정적인 매출', price: '월 400~600만', order: 0 },
-                { icon: 'ShoppingBag', title: '용품 판매', desc: '고마진 파크골프채, 공, 액세서리 판매 수익', price: '월 200~400만', order: 1 },
-                { icon: 'GraduationCap', title: '아카데미 교육', desc: '레슨 및 지도자 자격증 과정 수강료 수익', price: '월 150~300만', order: 2 },
-                { icon: 'CreditCard', title: '회원제 운영', desc: '월/연 단위 회원권 판매로 고정 수익 확보', price: '월 200~500만', order: 3 },
-              ];
-              for (const m of revModels) {
-                await addDoc(collection(db, 'revenue_models'), m);
-              }
-
-              // Products
-              const products = [
-                { 
-                  title: '스크린창업 솔루션', 
-                  subtitle: '조립부스·인테리어·장비까지 원스톱', 
-                  imageUrl: 'https://images.unsplash.com/photo-1535131749006-b7f58c99034b?auto=format&fit=crop&q=80&w=800',
-                  features: ['맞춤형 부스 시공', '인테리어 디자인', '스크린골프 장비 설치'],
-                  order: 0,
-                  layout: 'grid'
-                },
-                { 
-                  title: '골프채·용품 유통', 
-                  subtitle: '다양한 브랜드, 최고의 가격', 
-                  imageUrl: 'https://images.unsplash.com/photo-1593111774240-d529f12cf4bb?auto=format&fit=crop&q=80&w=800',
-                  features: ['정품 골프채', '골프용품·액세서리', '창업자 특별 할인'],
-                  order: 1,
-                  layout: 'grid'
-                },
-                { 
-                  title: '파크아카데미', 
-                  subtitle: '성공 창업을 위한 모든 것', 
-                  imageUrl: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=800',
-                  features: ['창업 교육', '운영 노하우', '지속적인 컨설팅'],
-                  order: 2,
-                  layout: 'grid'
-                },
-                { 
-                  title: '이동식컨테이너 사업', 
-                  subtitle: '이동과 설치가 쉬운 맞춤형 컨테이너', 
-                  imageUrl: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=800',
-                  features: ['스크린골프장', '매장·사무실', '빠른 설치·이동'],
-                  order: 3,
-                  layout: 'full'
-                }
-              ];
-              for (const p of products) {
-                await addDoc(collection(db, 'products'), p);
-              }
-
-              alert('데이터 시딩이 완료되었습니다. 페이지를 새로고침하세요.');
-            }
-          }}
-          className="bg-red-600 text-white px-6 py-2 rounded-xl font-bold hover:bg-red-700"
-        >
-          데이터 시딩 실행
-        </button>
+        <h3 className="text-xl font-bold mb-4">브랜드 소개 섹션</h3>
+        <div className="grid gap-6">
+          <div>
+            <label className="block text-sm font-bold text-gray-700 mb-1">메인 타이틀 (줄바꿈 가능)</label>
+            <textarea 
+              rows={2}
+              defaultValue={settings.brandIntro?.title} 
+              onBlur={(e) => handleSave({ brandIntro: { ...settings.brandIntro, title: e.target.value } })}
+              className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none" 
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-bold text-gray-700 mb-1">상세 설명</label>
+            <textarea 
+              rows={4}
+              defaultValue={settings.brandIntro?.description} 
+              onBlur={(e) => handleSave({ brandIntro: { ...settings.brandIntro, description: e.target.value } })}
+              className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none" 
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-bold text-gray-700 mb-1">핵심 포인트 (줄바꿈으로 구분)</label>
+            <textarea 
+              rows={4}
+              defaultValue={settings.brandIntro?.points?.join('\n')} 
+              onBlur={(e) => handleSave({ brandIntro: { ...settings.brandIntro, points: e.target.value.split('\n').filter(s => s.trim()) } })}
+              className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none" 
+              placeholder="한 줄에 하나씩 입력하세요"
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-bold text-gray-700 mb-1">배지 수치 (예: 100%)</label>
+              <input 
+                type="text" 
+                defaultValue={settings.brandIntro?.badgeValue} 
+                onBlur={(e) => handleSave({ brandIntro: { ...settings.brandIntro, badgeValue: e.target.value } })}
+                className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none" 
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-bold text-gray-700 mb-1">배지 라벨 (예: 점주 만족도)</label>
+              <input 
+                type="text" 
+                defaultValue={settings.brandIntro?.badgeLabel} 
+                onBlur={(e) => handleSave({ brandIntro: { ...settings.brandIntro, badgeLabel: e.target.value } })}
+                className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none" 
+              />
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-bold text-gray-700 mb-1">소개 이미지 URL</label>
+            <input 
+              type="text" 
+              defaultValue={settings.brandIntro?.imageUrl} 
+              onBlur={(e) => handleSave({ brandIntro: { ...settings.brandIntro, imageUrl: e.target.value } })}
+              className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none" 
+            />
+          </div>
+        </div>
       </div>
     </div>
   );

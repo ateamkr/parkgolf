@@ -1,4 +1,5 @@
 import { motion, AnimatePresence } from 'motion/react';
+import { Link } from 'react-router-dom';
 import { 
   Trophy, 
   Clock, 
@@ -127,12 +128,103 @@ const SectionHeading = ({ title, subtitle, light = false }: { title: string; sub
 const iconMap: Record<string, any> = { Clock, TrendingUp, Building2, Award, Users, Store, Trophy, ShoppingBag, GraduationCap, CreditCard };
 
 export default function Home() {
-  const [heroSlides, setHeroSlides] = useState<any[]>([]);
-  const [stats, setStats] = useState<any[]>([]);
-  const [features, setFeatures] = useState<any[]>([]);
-  const [revenueModels, setRevenueModels] = useState<any[]>([]);
-  const [products, setProducts] = useState<any[]>([]);
-  const [settings, setSettings] = useState<any>(null);
+  const [heroSlides, setHeroSlides] = useState<any[]>([
+    {
+      url: "https://images.unsplash.com/photo-1591491640784-3232eb748d4b?auto=format&fit=crop&q=80&w=1920",
+      title: "시니어 건강을 지키는",
+      highlight: "행복한 공간",
+      subtitle: "사람이 모이고 이야기가 피어나는 우리 동네 사랑방\n건강과 수익을 동시에 챙기는 스마트 솔루션",
+      order: 0
+    },
+    {
+      url: "https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?auto=format&fit=crop&q=80&w=1920",
+      title: "3일이면 완성되는",
+      highlight: "스크린 파크골프",
+      subtitle: "조립식 부스 시스템으로 빠르고 간편한 설치\n지금 바로 성공 창업의 기회를 잡으세요",
+      order: 1
+    },
+    {
+      url: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=1920",
+      title: "취미가 수익이 되는",
+      highlight: "파크사랑방",
+      subtitle: "저비용 소형 스크린 파크골프 기반\n용품 + 교육 + 운영을 결합한 혁신적인 수익형 매장",
+      order: 2
+    }
+  ]);
+  const [stats, setStats] = useState<any[]>([
+    { label: '설치 기간', value: '3일', order: 0 },
+    { label: '수익 모델', value: '4가지', order: 1 },
+    { label: '전국 지점', value: '200+', order: 2 },
+    { label: '월 예상 수익', value: '1,000만+', order: 3 },
+  ]);
+  const [features, setFeatures] = useState<any[]>([
+    { icon: 'Clock', title: '3일 완성 시스템', desc: '설계부터 시공까지 단 3일이면 오픈 가능합니다.', order: 0 },
+    { icon: 'TrendingUp', title: '복합 수익 구조', desc: '이용료, 용품, 교육, 회원제 4가지 수익 모델.', order: 1 },
+    { icon: 'Building2', title: '저비용 창업', desc: '조립식 부스와 최적화된 인테리어로 비용 최소화.', order: 2 },
+    { icon: 'Award', title: '최고의 품질', desc: '검증된 스크린 장비와 프리미엄 파크골프 용품.', order: 3 },
+    { icon: 'Users', title: '전문 아카데미', desc: '본사 교육 노하우 전수로 초보자도 운영 가능.', order: 4 },
+    { icon: 'Store', title: '무인 운영 가능', desc: '스마트 시스템 도입으로 효율적인 매장 관리.', order: 5 },
+  ]);
+  const [revenueModels, setRevenueModels] = useState<any[]>([
+    { icon: 'Store', title: '타석 이용료', desc: '시간당 이용 요금으로 발생하는 안정적인 매출', price: '월 400~600만', order: 0 },
+    { icon: 'ShoppingBag', title: '용품 판매', desc: '고마진 파크골프채, 공, 액세서리 판매 수익', price: '월 200~400만', order: 1 },
+    { icon: 'GraduationCap', title: '아카데미 교육', desc: '레슨 및 지도자 자격증 과정 수강료 수익', price: '월 150~300만', order: 2 },
+    { icon: 'CreditCard', title: '회원제 운영', desc: '월/연 단위 회원권 판매로 고정 수익 확보', price: '월 200~500만', order: 3 },
+  ]);
+  const [products, setProducts] = useState<any[]>([
+    { 
+      title: '스크린창업 솔루션', 
+      subtitle: '조립부스·인테리어·장비까지 원스톱', 
+      imageUrl: 'https://images.unsplash.com/photo-1535131749006-b7f58c99034b?auto=format&fit=crop&q=80&w=800',
+      features: ['맞춤형 부스 시공', '인테리어 디자인', '스크린골프 장비 설치'],
+      order: 0,
+      layout: 'grid'
+    },
+    { 
+      title: '골프채·용품 유통', 
+      subtitle: '다양한 브랜드, 최고의 가격', 
+      imageUrl: 'https://images.unsplash.com/photo-1593111774240-d529f12cf4bb?auto=format&fit=crop&q=80&w=800',
+      features: ['정품 골프채', '골프용품·액세서리', '창업자 특별 할인'],
+      order: 1,
+      layout: 'grid'
+    },
+    { 
+      title: '파크아카데미', 
+      subtitle: '성공 창업을 위한 모든 것', 
+      imageUrl: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=800',
+      features: ['창업 교육', '운영 노하우', '지속적인 컨설팅'],
+      order: 2,
+      layout: 'grid'
+    },
+    { 
+      title: '이동식컨테이너 사업', 
+      subtitle: '이동과 설치가 쉬운 맞춤형 컨테이너', 
+      imageUrl: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=800',
+      features: ['스크린골프장', '매장·사무실', '빠른 설치·이동'],
+      order: 3,
+      layout: 'full'
+    }
+  ]);
+  const [settings, setSettings] = useState<any>({
+    brandName: '파크사랑방',
+    contactPhone: '1661-6842',
+    contactEmail: 'info@parksarang.co.kr',
+    address: '서울특별시 강남구 테헤란로 123, 4층 (파크빌딩)',
+    footerDescription: '파크사랑방은 시니어 건강과 즐거움을 위한 최고의 파크골프 환경을 제공합니다. 차별화된 기술력과 서비스로 파크골프의 새로운 기준을 제시합니다.',
+    brandIntro: {
+      title: "단순한 매장이 아닌\n지속 가능한 수익 플랫폼입니다.",
+      description: "파크사랑방은 시니어 인구 급증과 실내 스포츠 수요 폭발에 맞춰 설계된 프리미엄 파크골프 프렌차이즈입니다. 조립식 부스 시스템으로 단 3일이면 창업이 가능하며, 4가지 복합 수익 구조로 안정적인 매출을 보장합니다.",
+      points: [
+        '소형 평수(15~30평) 최적화 창업',
+        '무인 운영 시스템으로 인건비 절감',
+        '본사 원스톱 지원',
+        '정부 지원 사업 연계 가능'
+      ],
+      badgeValue: "100%",
+      badgeLabel: "점주 만족도",
+      imageUrl: "https://images.unsplash.com/photo-1591491640784-3232eb748d4b?auto=format&fit=crop&q=80&w=1920"
+    }
+  });
   const [currentHero, setCurrentHero] = useState(0);
   const [loading, setLoading] = useState(true);
 
@@ -148,18 +240,12 @@ export default function Home() {
           getDoc(doc(db, 'settings', 'site'))
         ]);
 
-        setHeroSlides(heroSnap.docs.map(d => d.data()));
-        setStats(statsSnap.docs.map(d => d.data()));
-        setFeatures(featuresSnap.docs.map(d => d.data()));
-        setRevenueModels(revSnap.docs.map(d => d.data()));
-        setProducts(productsSnap.docs.map(d => d.data()));
-        setSettings(settingsSnap.exists() ? settingsSnap.data() : {
-          brandName: '파크사랑방',
-          contactPhone: '1661-6842',
-          contactEmail: 'info@parksarang.co.kr',
-          address: '서울특별시 강남구 테헤란로 123, 4층 (파크빌딩)',
-          footerDescription: '파크사랑방은 시니어 건강과 즐거움을 위한 최고의 파크골프 환경을 제공합니다.'
-        });
+        if (heroSnap.docs.length > 0) setHeroSlides(heroSnap.docs.map(d => d.data()));
+        if (statsSnap.docs.length > 0) setStats(statsSnap.docs.map(d => d.data()));
+        if (featuresSnap.docs.length > 0) setFeatures(featuresSnap.docs.map(d => d.data()));
+        if (revSnap.docs.length > 0) setRevenueModels(revSnap.docs.map(d => d.data()));
+        if (productsSnap.docs.length > 0) setProducts(productsSnap.docs.map(d => d.data()));
+        if (settingsSnap.exists()) setSettings(settingsSnap.data());
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -180,14 +266,6 @@ export default function Home() {
 
   if (loading) return <div className="flex items-center justify-center h-screen">Loading...</div>;
 
-  // Fallback if no data in Firestore yet
-  if (heroSlides.length === 0) return (
-    <div className="flex flex-col items-center justify-center h-screen text-center p-10">
-      <h1 className="text-2xl font-bold mb-4">데이터가 없습니다.</h1>
-      <p className="text-gray-600 mb-8">관리자 페이지에서 초기 데이터를 생성해주세요.</p>
-      <a href="/admin" className="bg-green-600 text-white px-8 py-3 rounded-xl font-bold">관리자 페이지로 이동</a>
-    </div>
-  );
 
   return (
     <div className="min-h-screen bg-white font-sans text-gray-900 selection:bg-green-100 selection:text-green-900">
@@ -249,10 +327,20 @@ export default function Home() {
           <div className="grid md:grid-cols-2 gap-16 items-center">
             <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={{ hidden: { opacity: 0, x: -50 }, visible: { opacity: 1, x: 0, transition: { duration: 0.8, staggerChildren: 0.2 } } }}>
               <motion.h3 variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="text-green-600 font-bold text-xl mb-4">왜 {settings.brandName}인가?</motion.h3>
-              <motion.h2 variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="text-4xl md:text-5xl font-bold text-gray-900 mb-8 leading-tight">단순한 매장이 아닌<br />지속 가능한 <span className="text-green-600">수익 플랫폼</span>입니다.</motion.h2>
-              <motion.p variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="text-xl text-gray-600 mb-10 leading-relaxed">파크사랑방은 시니어 인구 급증과 실내 스포츠 수요 폭발에 맞춰 설계된 프리미엄 파크골프 프렌차이즈입니다. 조립식 부스 시스템으로 단 3일이면 창업이 가능하며, 4가지 복합 수익 구조로 안정적인 매출을 보장합니다.</motion.p>
+              <motion.h2 variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="text-4xl md:text-5xl font-bold text-gray-900 mb-8 leading-tight whitespace-pre-line">
+                {settings.brandIntro?.title?.includes('수익 플랫폼') ? (
+                  <>
+                    {settings.brandIntro.title.split('수익 플랫폼')[0]}
+                    <span className="text-green-600">수익 플랫폼</span>
+                    {settings.brandIntro.title.split('수익 플랫폼')[1]}
+                  </>
+                ) : settings.brandIntro?.title}
+              </motion.h2>
+              <motion.p variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="text-xl text-gray-600 mb-10 leading-relaxed">
+                {settings.brandIntro?.description}
+              </motion.p>
               <motion.ul variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.1 } } }} className="space-y-5">
-                {['소형 평수(15~30평) 최적화 창업', '무인 운영 시스템으로 인건비 절감', '본사 원스톱 지원', '정부 지원 사업 연계 가능'].map((item) => (
+                {settings.brandIntro?.points?.map((item: string) => (
                   <motion.li key={item} variants={{ hidden: { opacity: 0, x: -20 }, visible: { opacity: 1, x: 0 } }} className="flex items-center gap-4 text-gray-800 font-semibold text-lg">
                     <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center shrink-0"><CheckCircle2 className="text-green-600" size={20} /></div>
                     {item}
@@ -262,11 +350,11 @@ export default function Home() {
             </motion.div>
             <motion.div initial={{ opacity: 0, x: 40 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="relative">
               <div className="aspect-[3/4] rounded-3xl overflow-hidden shadow-2xl">
-                <img src={heroSlides[0].url} alt="Brand Intro" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                <img src={settings.brandIntro?.imageUrl || heroSlides[0].url} alt="Brand Intro" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
               </div>
               <div className="absolute -bottom-8 -left-8 bg-white p-8 rounded-2xl shadow-xl border border-gray-100 hidden md:block">
-                <p className="text-4xl font-black text-green-600 mb-1">100%</p>
-                <p className="text-gray-500 font-bold">점주 만족도</p>
+                <p className="text-4xl font-black text-green-600 mb-1">{settings.brandIntro?.badgeValue}</p>
+                <p className="text-gray-500 font-bold">{settings.brandIntro?.badgeLabel}</p>
               </div>
             </motion.div>
           </div>
@@ -406,8 +494,14 @@ export default function Home() {
               </ul>
             </div>
           </div>
-          <div className="pt-8 border-t border-gray-800 text-center text-sm">
+          <div className="pt-8 border-t border-gray-800 text-center text-sm flex flex-col sm:flex-row justify-center items-center gap-6">
             <p>© 2024 {settings.brandName}. All rights reserved.</p>
+            <Link 
+              to="/admin" 
+              className="px-4 py-1.5 rounded-full border border-gray-800 hover:border-gray-600 hover:text-white transition-all text-xs font-medium"
+            >
+              관리자 로그인
+            </Link>
           </div>
         </div>
       </footer>
