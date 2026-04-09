@@ -72,7 +72,7 @@ const Counter = ({ value, duration = 2000 }: { value: string; duration?: number 
   );
 };
 
-const Navbar = ({ brandName }: { brandName: string }) => {
+const Navbar = ({ brandName, logoUrl }: { brandName: string; logoUrl?: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   const navLinks = [
     { name: '브랜드 소개', href: '#brand' },
@@ -87,11 +87,15 @@ const Navbar = ({ brandName }: { brandName: string }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-20 items-center">
           <div className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center">
-              <div className="w-6 h-6 border-2 border-white rounded-full flex items-center justify-center">
-                <div className="w-2 h-2 bg-white rounded-full" />
+            {logoUrl ? (
+              <img src={logoUrl} alt={brandName} className="h-10 w-auto object-contain" referrerPolicy="no-referrer" />
+            ) : (
+              <div className="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center">
+                <div className="w-6 h-6 border-2 border-white rounded-full flex items-center justify-center">
+                  <div className="w-2 h-2 bg-white rounded-full" />
+                </div>
               </div>
-            </div>
+            )}
             <span className="text-2xl font-bold text-green-800 tracking-tight">{brandName}</span>
           </div>
           <div className="hidden md:flex items-center gap-8">
@@ -207,6 +211,7 @@ export default function Home() {
   ]);
   const [settings, setSettings] = useState<any>({
     brandName: '파크사랑방',
+    logoUrl: '',
     contactPhone: '1661-6842',
     contactEmail: 'info@parksarang.co.kr',
     address: '서울특별시 강남구 테헤란로 123, 4층 (파크빌딩)',
@@ -269,7 +274,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-white font-sans text-gray-900 selection:bg-green-100 selection:text-green-900">
-      <Navbar brandName={settings.brandName} />
+      <Navbar brandName={settings.brandName} logoUrl={settings.logoUrl} />
 
       {/* Hero Section */}
       <section className="relative h-[85vh] md:h-[90vh] flex items-center justify-center overflow-hidden bg-green-950">

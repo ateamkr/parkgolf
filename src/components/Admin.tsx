@@ -676,6 +676,7 @@ function SettingsManager() {
     } else {
       const initial = {
         brandName: '파크사랑방',
+        logoUrl: '',
         contactPhone: '1661-6842',
         contactEmail: 'info@parksarang.co.kr',
         address: '서울특별시 강남구 테헤란로 123, 4층 (파크빌딩)',
@@ -738,6 +739,7 @@ function SettingsManager() {
       // Settings
       const initialSettings = {
         brandName: '파크사랑방',
+        logoUrl: '',
         contactPhone: '1661-6842',
         contactEmail: 'info@parksarang.co.kr',
         address: '서울특별시 강남구 테헤란로 123, 4층 (파크빌딩)',
@@ -866,6 +868,24 @@ function SettingsManager() {
               onBlur={(e) => handleSave({ brandName: e.target.value })}
               className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none" 
             />
+          </div>
+          <div>
+            <label className="block text-sm font-bold text-gray-700 mb-1">로고 이미지 URL</label>
+            <div className="flex gap-4 items-center">
+              <input 
+                type="text" 
+                defaultValue={settings.logoUrl} 
+                onBlur={(e) => handleSave({ logoUrl: e.target.value })}
+                className="flex-1 px-4 py-2 rounded-lg border border-gray-200 outline-none" 
+                placeholder="https://example.com/logo.png"
+              />
+              {settings.logoUrl && (
+                <div className="w-12 h-12 border border-gray-100 rounded-lg overflow-hidden bg-gray-50 flex items-center justify-center p-1">
+                  <img src={settings.logoUrl} alt="Logo Preview" className="max-w-full max-h-full object-contain" referrerPolicy="no-referrer" />
+                </div>
+              )}
+            </div>
+            <p className="text-xs text-gray-400 mt-1">로고 이미지가 없으면 브랜드명 텍스트가 표시됩니다.</p>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
